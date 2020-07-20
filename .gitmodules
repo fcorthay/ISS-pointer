@@ -1,0 +1,20 @@
+[submodule "ISS-pointer-clockwork"]
+	path = ISS-pointer-clockwork
+	url = https://github.com/fcorthay/ISS-pointer-clockwork.git
+	branch = master
+[submodule "ISS-pointer-case"]
+	path = ISS-pointer-case
+	url = https://github.com/fcorthay/ISS-pointer-case.git
+	branch = master
+[submodule "ISS-pointer-test"]
+	path = ISS-pointer-test
+	url = https://github.com/fcorthay/ISS-pointer-test.git
+	branch = master
+[submodule "ISS-pointer-direction_calculator"]
+	path = ISS-pointer-direction_calculator
+	url = https://github.com/fcorthay/ISS-pointer-direction_calculator.git
+	branch = master
+[submodule "ISS-pointer-motors_control"]
+	path = ISS-pointer-motors_control
+	url = https://github.com/fcorthay/ISS-pointer-motors_control.git
+	branch = master
