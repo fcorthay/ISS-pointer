@@ -125,7 +125,7 @@ angles</panel_attributes>
       <w>100</w>
       <h>40</h>
     </coordinates>
-    <panel_attributes>lt=.&gt;
+    <panel_attributes>lt=&lt;.
 &lt;&lt;access&gt;&gt;</panel_attributes>
     <additional_attributes>10.0;20.0;80.0;20.0</additional_attributes>
   </element>
