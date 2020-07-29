@@ -5,42 +5,36 @@ import time
 tick_pipe_filespec = "/tmp/tick.txt"
 INDENT = '  '
 
-print("Starting scheduler")
+# ------------------------------------------------------------------------------
+                                                              # create pipe file
+print('Starting scheduler')
 try:
     os.mkfifo(tick_pipe_filespec)
 except:
     pass
 else:
     print(INDENT + "Tick FIFO {} has been created".format(tick_pipe_filespec))
-
+                                                                     # open file
+print('Opening pipe')
+print(INDENT + 'Waiting for soembody to read')
 try:
     tick_pipe = open(tick_pipe_filespec, "w")
 except Exception as e:
-    print (e)
+    print(e)
     sys.exit()
-
+                                                               # send time ticks
 x = 0
-while x < 5:
-    tick_pipe.write(str(x))
-    tick_pipe.flush()
+while True:
     print (INDENT + "sending {:d}".format(x))
+    tick_pipe.write(str(x))
+#    tick_pipe.flush()
     x+=1
     time.sleep(1)
-print ("Closing")
+                                                                    # close file
+print ('Closing pipe')
 tick_pipe.close()
+                                                              # delete pipe file
 try:
-    os.unlink(tick_pipe)
+    os.unlink(tick_pipe_filespec)
 except:
     pass
-
-
-
-#     tick_fifo = os.open(tick_pipe_filespec, os.O_WRONLY)
-
-# with open(tick_pipe_filespec, mode = 'w') as tick_pipe:
-#     print("FIFO opened")
-#     data = tick_pipe.write("signal")
-#     if len(data) == 0:
-#         print("Writer is closed")
-#     print('Write: "{0}"'.format(data))
-#     tick_pipe.close()
