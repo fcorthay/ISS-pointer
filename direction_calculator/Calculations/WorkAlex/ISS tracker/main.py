@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from Int import Int_ASK
 from datetime import datetime
 

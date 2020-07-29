@@ -6,6 +6,8 @@ from adafruit_motor import stepper
 
 microstep_nb = 16
 step_nb = 100
+complete_test = False
+
 INDENT = '  '
 
 print('Testing stepper motors')
@@ -30,19 +32,21 @@ for motor in [kit.stepper1, kit.stepper2]:
         motor.onestep(direction=stepper.BACKWARD)
         time.sleep(0.01)
 
-    time.sleep(1)
+    if complete_test:
 
-    print(INDENT*2 + 'double coil forwards')
-    for index in range(step_nb):
-        motor.onestep(style=stepper.DOUBLE)
-        time.sleep(0.01)
+        time.sleep(1)
 
-    time.sleep(1)
+        print(INDENT*2 + 'double coil forwards')
+        for index in range(step_nb):
+            motor.onestep(style=stepper.DOUBLE)
+            time.sleep(0.01)
 
-    print(INDENT*2 + 'microstep backwards')
-    for index in range(microstep_nb*step_nb):
-        motor.onestep(direction=stepper.BACKWARD, style=stepper.MICROSTEP)
-        time.sleep(0.01)
+        time.sleep(1)
+
+        print(INDENT*2 + 'microstep backwards')
+        for index in range(microstep_nb*step_nb):
+            motor.onestep(direction=stepper.BACKWARD, style=stepper.MICROSTEP)
+            time.sleep(0.01)
 
     motor.release()
     print()
