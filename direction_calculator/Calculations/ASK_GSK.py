@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from datetime import datetime
 from math import *
 
@@ -67,7 +68,7 @@ def ASK_to_GSK(DateTime = datetime(2000,1,1,0,0,0),vecASK = [0.0,0.0,0.0,0.0,0.0
     return vecGSK
 
 
-for i in range(100000000):
+for i in range(10):
     with open("ASK_vector.txt", "r") as Rfile:
         TextData = Rfile.read()
         vecASKText = TextData.split(" | ")

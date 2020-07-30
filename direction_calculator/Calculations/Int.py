@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from datetime import datetime
 from datetime import timedelta
 import numpy as np
@@ -148,7 +149,7 @@ class Int_ASK:
 Int = Int_ASK(datetime(2020,7,25,0,0,0),[0.0,4.210800438221973,6.459354829086378,6713.724608199999,0.0,0.0],[1,0,0,False],[1])
 # while True:
 prtextDateTime = ""
-for i in range(10000000):
+for i in range(1):
     with open("Tick.txt", "r") as file:
         textDateTime = file.read()
         if textDateTime != prtextDateTime:

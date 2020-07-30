@@ -24,7 +24,8 @@ except Exception as e:
     sys.exit()
                                                                # send time ticks
 x = 0
-while True:
+#while True:
+while x < 10:
     print (INDENT + "sending {:d}".format(x))
     tick_pipe.write(str(x))
 #    tick_pipe.flush()
