@@ -5,7 +5,7 @@ from adafruit_motorkit import MotorKit
 from adafruit_motor import stepper
 
 microstep_nb = 16
-step_nb = 100
+step_nb = 10
 complete_test = False
 
 INDENT = '  '
@@ -13,7 +13,8 @@ INDENT = '  '
 print('Testing stepper motors')
 kit = MotorKit()
 
-for motor in [kit.stepper1, kit.stepper2]:
+#for motor in [kit.stepper1, kit.stepper2]:
+for motor in [kit.stepper1]:
 
     if motor is kit.stepper1:
         print(INDENT + 'motor 1')
