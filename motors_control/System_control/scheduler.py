@@ -27,7 +27,7 @@ x = 0
 #while True:
 while x < 10:
     print (INDENT + "sending {:d}".format(x))
-    tick_pipe.write(str(x))
+    tick_pipe.write(str(x) + "\n")
 #    tick_pipe.flush()
     x+=1
     time.sleep(1)

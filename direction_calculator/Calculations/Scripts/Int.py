@@ -10,6 +10,9 @@ import dateparser
 import numpy as np
 from int_func import *
 
+tick_pipe_filespec = "/tmp/tick.txt"
+
+
 class Int_ASK:
     def __init__(self,InitDateTime = datetime(2020,7,25,0,0,0),InitASK = [0.0,0.0,0.0,0.0,0.0,0.0], # ASK[Vx[km/s],Vy[km/s],Vz[km/s],x[km],y[km],z[km]]
                  Settings = [30,0,0,False], ExportSettings = [0]):
@@ -163,6 +166,7 @@ class Int_ASK:
         elif self.IntExpChanal == 1:
             with open("ASK_vector.txt", "w") as file:
                 file.write(outData)
+            print(outData)
             file.close()
 
 with open("ASKinit_vector.txt", "r", encoding="utf-8") as Rfile:
@@ -175,15 +179,13 @@ with open("ASKinit_vector.txt", "r", encoding="utf-8") as Rfile:
     Rfile.close()
 
 
-Int = Int_ASK(DT0,vecASK0,[1,0,0,False],[0])
-# while True:
-prtextDateTime = ""
-for i in range(10000):
-    with open("Tick.txt", "r") as file:
-        textDateTime = file.read()
-        if textDateTime != prtextDateTime:
-            Int.setEnd_DateTime(datetime.strptime(textDateTime, '%Y-%m-%d %H:%M:%S'))
-            Int.Calc()
-            prtextDateTime = textDateTime
-        file.close()
-
+Int = Int_ASK(DT0,vecASK0,[0.1,0,0,False],[0])
+Int = Int_ASK(DT0,vecASK0,[0.1,0,0,False],[1])
+while True:
+    tick_pipe = open(tick_pipe_filespec, "r")
+    textDateTime = tick_pipe.read()
+    print("Received: " + textDateTime)
+    tick_pipe.close()
+    Int.setEnd_DateTime(datetime.strptime(textDateTime, '%Y-%m-%d %H:%M:%S'))
+    Int.Calc()
+    prtextDateTime = textDateTime
