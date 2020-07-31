@@ -74,6 +74,7 @@ def norm (x) :
 			n+=x[i]**2
 	return math.sqrt(n)
 	
+# ------------------------------------------------------------------------------
 #have a look on mathilde's work	
 def anglesPos(x,z,ai) :
 	phi1,phi2 = 0,0

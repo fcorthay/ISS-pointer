@@ -5,15 +5,16 @@ import time
 
 path = "/tmp/tick.txt"
 try:
-    os.unlink(path)
+    os.mkfifo(path)
 except:
     pass
-os.mkfifo(path)
 
-for index in range(3):
+index = 0
+while True:
     fifo = open(path, "w")
-    line = "Message {:d}!".format(index)
+    line = "Message {:d}".format(index)
     print(line)
     fifo.write(line)
     fifo.close()
     time.sleep(1)
+    index = index + 1
