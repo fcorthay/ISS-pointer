@@ -73,23 +73,48 @@ def ASK_to_GSK(DateTime = datetime(2000,1,1,0,0,0),vecASK = [0.0,0.0,0.0,0.0,0.0
     return vecGSK  # GSK[Vx[km/s],Vy[km/s],Vz[km/s],x[km],y[km],z[km]]
 
 
-for i in range(10):
-    with open("ASK_vector.txt", "r") as Rfile:
-        TextData = Rfile.read() # ASK[DateTime,Vx[km/s],Vy[km/s],Vz[km/s],x[km],y[km],z[km]]
-        vecASKText = TextData.split(" | ")
-        DT = datetime.strptime(vecASKText[0], '%Y-%m-%d %H:%M:%S')
-        vecASK = []
-        for i in range(1, len(vecASKText)):
-            vecASK.append(float(vecASKText[i]))
-        vecGSK = ASK_to_GSK(DT,vecASK)
+intput_pipe_path = "/tmp/ASK_vector.txt"
+output_pipe_path = "/tmp/GSK_vector.txt"
 
-        razd = " | "
-        outData = str(DT)
-        for val in vecGSK:
-            outData += razd + str(val)
+# for i in range(10):
+#     with open("ASK_vector.txt", "r") as Rfile:
+#         TextData = Rfile.read() # ASK[DateTime,Vx[km/s],Vy[km/s],Vz[km/s],x[km],y[km],z[km]]
+#         vecASKText = TextData.split(" | ")
+#         DT = datetime.strptime(vecASKText[0], '%Y-%m-%d %H:%M:%S')
+#         vecASK = []
+#         for i in range(1, len(vecASKText)):
+#             vecASK.append(float(vecASKText[i]))
+#         vecGSK = ASK_to_GSK(DT,vecASK)
+#
+#         razd = " | "
+#         outData = str(DT)
+#         for val in vecGSK:
+#             outData += razd + str(val)
+#
+#         with open("GSK_vector.txt", "w") as Wfile:
+#             Wfile.write(outData) # GSK[DateTime,Vx[km/s],Vy[km/s],Vz[km/s],x[km],y[km],z[km]]
+#         Wfile.close()
+#     Rfile.close()
 
-        with open("GSK_vector.txt", "w") as Wfile:
-            Wfile.write(outData) # GSK[DateTime,Vx[km/s],Vy[km/s],Vz[km/s],x[km],y[km],z[km]]
-        Wfile.close()
-    Rfile.close()
 
+while True:
+    ASK_pipe = open(intput_pipe_path, "r")
+    TextData = ASK_pipe.read()
+    print("Received: " + TextData)
+    ASK_pipe.close()
+    vecASKText = TextData.split(" | ")
+    DT = datetime.strptime(vecASKText[0], '%Y-%m-%d %H:%M:%S')
+    vecASK = []
+    for i in range(1, len(vecASKText)):
+        vecASK.append(float(vecASKText[i]))
+    vecGSK = ASK_to_GSK(DT, vecASK)
+
+    razd = " | "
+    outData = str(DT)
+    for val in vecGSK:
+        outData += razd + str(val)
+
+    Outfile = open(output_pipe_path, "w")
+    print("Sended: " +outData)
+    Outfile.write(outData)
+    Outfile.close()

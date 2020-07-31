@@ -17,10 +17,24 @@ except:
     pass
 os.mkfifo(tick_pipe_filespec)
 print(INDENT + "Tick FIFO {} has been created".format(tick_pipe_filespec))
+
+delay_in_sec = 30
                                                                # send time ticks
-x = datetime(2020,7,31,10,0,0)
-#while True:
-while x < datetime(2020,7,31,10,1,0):
+x = datetime.now() + timedelta(seconds = delay_in_sec-1)
+
+# Initial step for Int.py have
+x_str = str(x)
+print (INDENT + "sending " + x_str)
+tick_pipe = open(tick_pipe_filespec, "w")
+tick_pipe.write(str(x_str))
+#    tick_pipe.flush()
+tick_pipe.close()
+x+= timedelta(milliseconds=(int(round(1000))))
+time.sleep(delay_in_sec)
+
+x = datetime.now()
+x_end = x + timedelta(days = 7) #work will end after 7 days
+while x < x_end:
     x_str = str(x)
     print (INDENT + "sending " + x_str)
     tick_pipe = open(tick_pipe_filespec, "w")

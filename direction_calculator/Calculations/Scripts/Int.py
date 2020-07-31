@@ -3,6 +3,8 @@
 ###########################
 ###Trajectory Calculator###
 ###########################
+import os
+import time
 
 from datetime import datetime
 from datetime import timedelta
@@ -11,6 +13,15 @@ import numpy as np
 from int_func import *
 
 tick_pipe_filespec = "/tmp/tick.txt"
+
+output_pipe_path = "/tmp/ASK_vector.txt"
+try:
+	os.unlink(output_pipe_path)
+except:
+	pass
+os.mkfifo(output_pipe_path)
+
+
 
 
 class Int_ASK:
@@ -164,10 +175,10 @@ class Int_ASK:
         if self.IntExpChanal == 0:
             print(outData)
         elif self.IntExpChanal == 1:
-            with open("ASK_vector.txt", "w") as file:
-                file.write(outData)
+            Outfile = open(output_pipe_path, "w")
             print(outData)
-            file.close()
+            Outfile.write(outData)
+            Outfile.close()
 
 with open("ASKinit_vector.txt", "r", encoding="utf-8") as Rfile:
     TextData = Rfile.read() # ASK[DateTime,a[km],e[-],inc[deg],RAAN[deg],om[deg],u[deg]
