@@ -1,11 +1,10 @@
 #!/usr/bin/python3
+import time
+import math
 import board
 import busio
-import adafruit_lsm303_accel
 import adafruit_lsm303dlh_mag
-import time
-# Import math Library
-import math
+#import adafruit_lsm303_accel
 
 INDENT = '  '
 

@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+import time
 import board
 import busio
 import adafruit_lsm303_accel
@@ -9,4 +11,5 @@ accel.set_tap(1, 30)
 
 while True:
     if accel.tapped:
-        print("Tapped!\n")
+        print("Tapped")
+        time.sleep(1)
