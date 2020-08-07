@@ -1,13 +1,19 @@
 #!/usr/bin/python3
-
+from datetime import datetime
 from math import *
 
 # ------------------------------------------------------------------------------
 # Pipe file specifications
 #
-GREENWICH_COORD_FILE = "/tmp/ISS_coord_greenwich.txt"
-LOCAL_COORD_FILE = "/tmp/ISS_coord_local.txt"
-POINTING_ANGLES_FILE = "/tmp/ISS_angles.txt"
+SAMPLE_TIME_FILE = "/tmp/sample_time.fifo"
+GREENWICH_COORD_FILE = "/tmp/ISS_coord_greenwich.fifo"
+LOCAL_COORD_FILE = "/tmp/ISS_coord_local.fifo"
+POINTING_ANGLES_FILE = "/tmp/ISS_angles.fifo"
+
+# ------------------------------------------------------------------------------
+# Date and time information
+#
+DATETIME_STRING = "%d-%m-%Y %H:%M:%S"
 
 # ------------------------------------------------------------------------------
 # Local coordinates

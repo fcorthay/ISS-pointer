@@ -1,41 +1,33 @@
 #!/usr/bin/python3
 import os, sys
+import constants
 import time
+from datetime import datetime
 
-tick_pipe_filespec = "/tmp/tick.txt"
+WRITE_PIPE_OUT = False
+
 INDENT = '  '
 
 # ------------------------------------------------------------------------------
-                                                              # create pipe file
-print('Starting scheduler')
+                                                   # create pipe if not yet done
 try:
-    os.mkfifo(tick_pipe_filespec)
+    os.mkfifo(constants.SAMPLE_TIME_FILE)
 except:
     pass
-else:
-    print(INDENT + "Tick FIFO {} has been created".format(tick_pipe_filespec))
-                                                                     # open file
-print('Opening pipe')
-print(INDENT + 'Waiting for soembody to read')
-try:
-    tick_pipe = open(tick_pipe_filespec, "w")
-except Exception as e:
-    print(e)
-    sys.exit()
-                                                               # send time ticks
-x = 0
-#while True:
-while x < 10:
-    print (INDENT + "sending {:d}".format(x))
-    tick_pipe.write(str(x) + "\n")
-#    tick_pipe.flush()
-    x+=1
+                                                                    # print info
+print('Sending sampling times')
+print(constants.INDENT + "Writing to {}".format(constants.LOCAL_COORD_FILE))
+                                                                     # transform
+while True:
+                                                           # prepare time string
+    now = datetime.now()
+    line = now.strftime(constants.DATETIME_STRING)
+    #line = now.isoformat()
+    print(constants.INDENT*2 + 'writing: ' + line)
+                                                                 # write to pipe
+    if WRITE_PIPE_OUT:
+        local_coord = open(constants.LOCAL_COORD_FILE, "w")
+        local_coord.write(line)
+        local_coord.close()
+                                                          # wait for next sample
     time.sleep(1)
-                                                                    # close file
-print ('Closing pipe')
-tick_pipe.close()
-                                                              # delete pipe file
-try:
-    os.unlink(tick_pipe_filespec)
-except:
-    pass

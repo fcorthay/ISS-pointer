@@ -9,7 +9,7 @@ WRITE_PIPE_OUT = True
 # ------------------------------------------------------------------------------
                                                    # create pipe if not yet done
 try:
-    os.mkfifo(constants.local_coord_file)
+    os.mkfifo(constants.LOCAL_COORD_FILE)
 except:
     pass
                                                                     # print info
