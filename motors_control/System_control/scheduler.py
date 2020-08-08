@@ -26,8 +26,8 @@ while True:
     print(constants.INDENT*2 + 'writing: ' + line)
                                                                  # write to pipe
     if WRITE_PIPE_OUT:
-        local_coord = open(constants.LOCAL_COORD_FILE, "w")
-        local_coord.write(line)
-        local_coord.close()
+        sample_time = open(constants.SAMPLE_TIME_FILE, "w")
+        sample_time.write(line)
+        sample_time.close()
                                                           # wait for next sample
-    time.sleep(1)
+    time.sleep(constants.SAMPLING_PERIOD)

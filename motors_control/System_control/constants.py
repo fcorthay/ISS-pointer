@@ -15,6 +15,8 @@ POINTING_ANGLES_FILE = "/tmp/ISS_angles.fifo"
 #
 DATETIME_STRING = "%d-%m-%Y %H:%M:%S"
 
+SAMPLING_PERIOD = 1
+
 # ------------------------------------------------------------------------------
 # Local coordinates
 #
