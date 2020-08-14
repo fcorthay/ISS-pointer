@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import sys, os
 import math
 import numpy as np
 import matplotlib
@@ -9,11 +10,12 @@ import datetime
 # ------------------------------------------------------------------------------
 # constants
 #
-exagerate_ellipse = True
+exaggerate_ellipse = True
+exaggerate_ellipse = False
 perigee_from_surface = 418.0E3
 apogee_from_surface = 420.0E3
 earth_radius = 6.3781E6
-if exagerate_ellipse:
+if exaggerate_ellipse:
 	perigee_from_surface = 218.0E3
 	earth_radius = 0
 perigee_from_center = earth_radius + perigee_from_surface
@@ -31,19 +33,23 @@ e = c / a
 mu = 3.986004418E14
 ellipse_surface = a*b*np.pi
 rotation_period = 2 * np.pi * math.sqrt(a**3/mu)
+delta_angle = 2*math.pi / 1000
+max_angle_slope = 2 * ellipse_surface \
+    / (rotation_period * perigee_from_center**2)
 
 point_nb = 1000
 distance_scaling_factor = 1E3
 distance_scale = 'km'
 display_max_distance = 8000E3
 display_increment = 2000E3
-if exagerate_ellipse:
+if exaggerate_ellipse:
 	display_max_distance = 500E3
 	display_increment = 100E3
 
 INDENT = '  '
 
 pyplot.figure(figsize=(6, 9))
+pyplot.subplots_adjust(hspace = 0.5)
 
 # ==============================================================================
 # Procedures and functions
@@ -68,7 +74,21 @@ def time_at_angle(theta):
 	return(t)
 
 def angle_at_time(t):
-	angle = time_at_angle(t/rotation_period * 2*math.pi)
+                                                       # define global variables
+	global previous_time, previous_angle
+	if t == 0:
+		angle = 0.0
+	else:
+		angle_over = previous_angle + max_angle_slope * (t - previous_time)
+		t_over = time_at_angle(angle_over)
+		angle = previous_angle + \
+			(angle_over - previous_angle) * (t - previous_time) \
+			/ (t_over - previous_time)
+                                                         # store previous values
+	previous_time = t
+	previous_angle = angle
+
+#	print("{:.3f} -> {:.3f}".format(t, angle))
 	return(angle)
 
 # ==============================================================================
@@ -105,7 +125,10 @@ print(INDENT + "A : {:.1f} {}2".format(
 	ellipse_surface / distance_scaling_factor**2,
 	distance_scale
 ))
-print(INDENT + "T : " + str(datetime.timedelta(seconds = rotation_period)))
+print(INDENT + "T : {:d} s = {}".format(
+	round(rotation_period),
+	datetime.timedelta(seconds = rotation_period)
+))
 
 # ------------------------------------------------------------------------------
 # ISS ellipse
@@ -126,7 +149,7 @@ ellipse_plot.set_rticks(
 	)/distance_scaling_factor
 )
 ellipse_plot.grid(True)
-ellipse_plot.set_title("ISS elliptic trajectory [km]")
+ellipse_plot.set_title("Elliptic trajectory [km]")
 
 # ------------------------------------------------------------------------------
 # Swept surface
@@ -143,20 +166,22 @@ A1_A2[int(len(A1_A2)/2):] = 2*A1_A2[int(len(A1_A2)/2)] - A1_A2[int(len(A1_A2)/2)
 surface_plot = pyplot.subplot(312)
 surface_plot.plot(theta*180/np.pi, A1_A2/ellipse_surface)
                                                               # grids and labels
-surface_plot.set_xlim(0, theta[-1]*180/np.pi)
+surface_plot.set_xlim(0, 360)
 surface_plot.xaxis.set_major_locator(ticker.MultipleLocator(45))
 surface_plot.set_ylim(0, 1)
 surface_plot.yaxis.set_major_locator(ticker.MultipleLocator(0.25))
 surface_plot.grid()
 surface_plot.set(
-	xlabel='angle',
+	xlabel='angle [°]',
 	ylabel='relative surface',
-    title='Swept surface'
+    title='Swept surface as a function of the angle'
 )
 
 # ------------------------------------------------------------------------------
 # Angle as function of time
 #
+#print(theta[1]/(rotation_period*A1_A2[1]/ellipse_surface))
+#print(max_angle_slope)
                                                                # linear time set
 time = np.arange(0.0, rotation_period, rotation_period/point_nb)
                                                              # angle calculation
@@ -165,22 +190,24 @@ for sample in range(len(time)):
 	angles[sample] = angle_at_time(time[sample])
                                                           # plot normalized time
 angle_plot = pyplot.subplot(313)
-angle_plot.plot(time, angles)
+angle_plot.plot(time, angles*180/math.pi)
                                                               # grids and labels
 angle_plot.set_xlim(0, time[-1])
-#angle_plot.xaxis.set_major_locator(ticker.MultipleLocator(45))
-#angle_plot.set_ylim(0, 1)
-#angle_plot.yaxis.set_major_locator(ticker.MultipleLocator(0.25))
+angle_plot.xaxis.set_major_locator(ticker.MultipleLocator(rotation_period/8))
+angle_plot.set_ylim(0, 360)
+angle_plot.yaxis.set_major_locator(ticker.MultipleLocator(60))
 angle_plot.grid()
 angle_plot.set(
-	xlabel='time',
-	ylabel='angle',
+	xlabel='time [s]',
+	ylabel='angle [°]',
     title='Angle as a function of time'
 )
 
 # ------------------------------------------------------------------------------
 # Display results
 #
+
                                                      # screen and file rendering
-#fig.savefig("issEllipse.png")
+pathname = os.path.dirname(sys.argv[0])  
+pyplot.savefig(pathname + '/issEllipse.png')
 pyplot.show()
