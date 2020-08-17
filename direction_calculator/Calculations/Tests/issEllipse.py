@@ -51,6 +51,7 @@ if exaggerate_ellipse:
 	display_max_distance = 500E3
 	display_increment = 100E3
 earth_color = 'lightskyblue'
+earth_projection_color = 'lightblue'
 trajectory_color = 'darkgrey'
 trajectory_projection_color = 'lightgrey'
 
@@ -273,6 +274,8 @@ space_plot.plot(rotated_x, rotated_y, rotated_z, color=trajectory_color)
 # ------------------------------------------------------------------------------
 # plot projections
 #
+                                                         # trajectory projection
+                                                              # earth projection
 projected_trajectory = np.ones(len(flat_x)) \
     * display_max_distance/distance_scaling_factor
 space_plot.plot(
@@ -287,6 +290,13 @@ space_plot.plot(
     rotated_x, rotated_y, -projected_trajectory,
     color=trajectory_projection_color
 )
+                                                              # earth projection
+earth_x = earth_radius/distance_scaling_factor * np.cos(theta)
+earth_y = earth_radius/distance_scaling_factor * np.sin(theta)
+earth_z = -display_max_distance/distance_scaling_factor * np.ones(len(theta))
+space_plot.plot(earth_x, earth_y, earth_z, color=earth_projection_color)
+space_plot.plot(earth_z, earth_x, earth_y, color=earth_projection_color)
+space_plot.plot(earth_y, -earth_z, earth_x, color=earth_projection_color)
 
 # ------------------------------------------------------------------------------
 # Display results
