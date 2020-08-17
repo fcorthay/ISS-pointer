@@ -5,19 +5,21 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as pyplot
 import matplotlib.ticker as ticker
+from mpl_toolkits.mplot3d import Axes3D as axes3d
 import datetime
 
 # ------------------------------------------------------------------------------
 # constants
 #
 exaggerate_ellipse = True
-exaggerate_ellipse = False
+#exaggerate_ellipse = False
 perigee_from_surface = 418.0E3
 apogee_from_surface = 420.0E3
 earth_radius = 6.3781E6
 if exaggerate_ellipse:
-	perigee_from_surface = 218.0E3
-	earth_radius = 0
+    earth_radius = 100E3
+    apogee_from_surface = apogee_from_surface - earth_radius
+    perigee_from_surface = 218.0E3 - earth_radius
 perigee_from_center = earth_radius + perigee_from_surface
 apogee_from_center = earth_radius + apogee_from_surface
 
@@ -37,6 +39,9 @@ delta_angle = 2*math.pi / 1000
 max_angle_slope = 2 * ellipse_surface \
     / (rotation_period * perigee_from_center**2)
 
+inclination = 51.6462/180 * math.pi
+right_ascension = 60.7322/180 * math.pi
+
 point_nb = 1000
 distance_scaling_factor = 1E3
 distance_scale = 'km'
@@ -45,11 +50,11 @@ display_increment = 2000E3
 if exaggerate_ellipse:
 	display_max_distance = 500E3
 	display_increment = 100E3
+earth_color = 'lightskyblue'
+trajectory_color = 'darkgrey'
+trajectory_projection_color = 'lightgrey'
 
 INDENT = '  '
-
-pyplot.figure(figsize=(6, 9))
-pyplot.subplots_adjust(hspace = 0.5)
 
 # ==============================================================================
 # Procedures and functions
@@ -133,14 +138,22 @@ print(INDENT + "T : {:d} s = {}".format(
 # ------------------------------------------------------------------------------
 # ISS ellipse
 #
+                                                                # prepare figure
+pyplot.figure(1, figsize=(6, 9))
+pyplot.subplots_adjust(hspace = 0.5)
                                                                 # elliptic curve
 theta = np.arange(0.0, 2.0*np.pi, 2.0*np.pi/point_nb)
 r = p / (1 + e*np.cos(theta))
 earth_shape = earth_radius * np.ones(len(r))
-                                                               # ellipse drawing
+                                                        # plot satellite ellipse
 ellipse_plot = pyplot.subplot(311, projection='polar')
-ellipse_plot.plot(theta, r/distance_scaling_factor)
-ellipse_plot.plot(theta, earth_shape/distance_scaling_factor)
+ellipse_plot.plot(theta, r/distance_scaling_factor, color=trajectory_color)
+                                                             # plot earth circle
+ellipse_plot.plot(theta, earth_shape/distance_scaling_factor, color=earth_color)
+ellipse_plot.fill_between(
+    theta, earth_shape/distance_scaling_factor,
+    color=earth_color
+)
                                                               # grids and labels
 ellipse_plot.set_rmax(display_max_distance/distance_scaling_factor)
 ellipse_plot.set_rticks(
@@ -204,9 +217,80 @@ angle_plot.set(
 )
 
 # ------------------------------------------------------------------------------
+# 3D plot
+#
+                                                         # prepare second window
+figure_3d = pyplot.figure(2, figsize=(9, 9))
+space_plot = figure_3d.gca(projection='3d')
+plot_limits = [
+    -display_max_distance/distance_scaling_factor,
+    display_max_distance/distance_scaling_factor
+]
+space_plot.set_xlim3d(plot_limits)
+space_plot.set_ylim3d(plot_limits)
+space_plot.set_zlim3d(plot_limits)
+                                                          # satellite trajectory
+flat_x = r/distance_scaling_factor * np.cos(theta)
+flat_y = r /distance_scaling_factor* np.sin(theta)
+flat_z = np.zeros(len(flat_x))
+#space_plot.plot(flat_x, flat_y, flat_z)
+                                                          # earth representation
+u = np.linspace(0, 2 * np.pi, point_nb)
+v = np.linspace(0, np.pi, point_nb)
+earth_x = earth_radius/distance_scaling_factor * np.outer(np.cos(u), np.sin(v))
+earth_y = earth_radius/distance_scaling_factor * np.outer(np.sin(u), np.sin(v))
+earth_z = earth_radius/distance_scaling_factor * np.outer(np.ones(np.size(u)), np.cos(v))
+space_plot.plot_surface(earth_x, earth_y, earth_z, color=earth_color)
+
+# ------------------------------------------------------------------------------
+# 3D rotations
+#
+inclination_rotation = np.array([
+    [1,           0          ,           0           ],
+    [0, math.cos(inclination), -math.sin(inclination)],
+    [0, math.sin(inclination),  math.cos(inclination)]
+])
+ascension_rotation = np.array([
+    [math.cos(right_ascension), -math.sin(right_ascension), 0],
+    [math.sin(right_ascension),  math.cos(right_ascension), 0],
+    [            0            ,              0            , 1]
+])
+rotated_x = np.zeros(len(flat_x))
+rotated_y = np.zeros(len(flat_x))
+rotated_z = np.zeros(len(flat_x))
+for index in range(len(flat_x)):
+    flat_coordinates = np.array([[
+        flat_x[index], flat_y[index], flat_z[index]
+    ]]).transpose()
+    rotated_coordinates = np.dot(inclination_rotation, flat_coordinates)
+    rotated_coordinates = np.dot(ascension_rotation, rotated_coordinates)
+    rotated_coordinates = rotated_coordinates.transpose()[0]
+    rotated_x[index] = rotated_coordinates[0]
+    rotated_y[index] = rotated_coordinates[1]
+    rotated_z[index] = rotated_coordinates[2]
+space_plot.plot(rotated_x, rotated_y, rotated_z, color=trajectory_color)
+
+# ------------------------------------------------------------------------------
+# plot projections
+#
+projected_trajectory = np.ones(len(flat_x)) \
+    * display_max_distance/distance_scaling_factor
+space_plot.plot(
+    -projected_trajectory, rotated_y, rotated_z,
+    color=trajectory_projection_color
+)
+space_plot.plot(
+    rotated_x,  projected_trajectory, rotated_z,
+    color=trajectory_projection_color
+)
+space_plot.plot(
+    rotated_x, rotated_y, -projected_trajectory,
+    color=trajectory_projection_color
+)
+
+# ------------------------------------------------------------------------------
 # Display results
 #
-
                                                      # screen and file rendering
 pathname = os.path.dirname(sys.argv[0])  
 pyplot.savefig(pathname + '/issEllipse.png')

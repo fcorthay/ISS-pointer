@@ -15,16 +15,19 @@ ISS_position_URL = 'http://api.open-notify.org/iss-now.json'
 backgroung_image_file = os.path.dirname(sys.argv[0]) + '/earth.jpg'
 
 x_axis_range = [-180, 180]
+x_axis_length = x_axis_range[1]-x_axis_range[0]
+x_tick_length = 60
 y_axis_range = [-180, 180]
+y_tick_length = 60
 
-point_nb = 100
-sleep_time = 90*60 / point_nb
+point_nb = 200
+sleep_time = 7000 / point_nb
 
 simulate_data = True
 simulate_data = False
 if simulate_data:
     sleep_time = 1/20
-    sim_longitude = -180.0
+    sim_longitude = x_axis_range[0]
 
 (figure, axes) = pyplot.subplots()
 
@@ -32,17 +35,17 @@ if simulate_data:
 # Get ISS current location
 #
 found_point_nb = 0
-timestamps = [0] * (point_nb+1)
-longitudes = [0.0] * (point_nb+1)
-latitudes = [0.0] * (point_nb+1)
+timestamps = [0] * point_nb
+longitudes = [0.0] * point_nb
+latitudes = [0.0] * point_nb
 
 while True:
     if simulate_data:
         timestamp = time.time()
-        sim_longitude = sim_longitude + 360/point_nb
-        if sim_longitude > 180:
-            sim_longitude = sim_longitude - 360
-        sim_latitude = -180 * math.sin(sim_longitude * math.pi/180)
+        sim_longitude = sim_longitude + x_axis_length/point_nb
+        if sim_longitude > x_axis_range[1]:
+            sim_longitude = sim_longitude - x_axis_length
+        sim_latitude = y_axis_range[0] * math.sin(sim_longitude * math.pi/180)
         ISS_position = {
             'timestamp': timestamp,
             'iss_position': {
@@ -68,6 +71,7 @@ while True:
             latitude
         ))
                                                                 # update vectors
+#        print(found_point_nb)
         timestamps[found_point_nb] = timestamp
         longitudes[found_point_nb] = longitude
         latitudes[found_point_nb] = latitude
@@ -92,11 +96,11 @@ while True:
                 latitudes[0:found_point_nb-1]
             )
             axes.set_xlim(x_axis_range)
-            axes.xaxis.set_major_locator(ticker.MultipleLocator(60))
+            axes.xaxis.set_major_locator(ticker.MultipleLocator(x_tick_length))
             axes.set_ylim(y_axis_range)
-            axes.yaxis.set_major_locator(ticker.MultipleLocator(60))
+            axes.yaxis.set_major_locator(ticker.MultipleLocator(y_tick_length))
             pyplot.draw()
-            pyplot.pause(0.1)
+            pyplot.pause(0.5)
             pyplot.savefig('/tmp/flyover.png')
                                                                  # write to file
             CSV_file_spec = "/tmp/flyover-{}.csv"\
