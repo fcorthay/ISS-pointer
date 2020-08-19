@@ -1,2 +1,5 @@
 # don't keep python compiled code
 *.pyc
+
+# don't keep generated DXF files
+*.dxf
