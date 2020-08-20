@@ -17,7 +17,7 @@ backgroung_image_file = os.path.dirname(sys.argv[0]) + '/earth.jpg'
 x_axis_range = [-180, 180]
 x_axis_length = x_axis_range[1]-x_axis_range[0]
 x_tick_length = 60
-y_axis_range = [-180, 180]
+y_axis_range = [-90, 90]
 y_tick_length = 60
 
 point_nb = 200
