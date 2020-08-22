@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as pyplot
 import matplotlib.ticker as ticker
-from mpl_toolkits.mplot3d import Axes3D as axes3d
 import datetime
 import csv
 
