@@ -105,7 +105,7 @@ while True:
                                                                  # write to file
             CSV_file_spec = "/tmp/flyover-{}.csv"\
                 .format(timestamps[found_point_nb-1])
-            print(CSV_file_spec)
+ #           print(CSV_file_spec)
             CSV_file = open(CSV_file_spec, 'w')
             with CSV_file:
                 writer = csv.writer(CSV_file)
