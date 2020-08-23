@@ -25,7 +25,8 @@ def alpha0(D1 = datetime(2000,1,1,0,0,0)):
 
     UTC = hh*60*60+mm*60+ss
 
-    d = UTC/86400+367*year-(7*(year+(month+9) // 12)) // 4 + (275*month) // 9 + day - 730531.5
+    d = UTC/86400+367*year-(7*(year+(month+9) // 12)) // 4 + (275*month) \
+        // 9 + day - 730531.5
     S_mean =280.46061837+360.98564736629*d
 
     while(S_mean/2>180):
@@ -44,7 +45,8 @@ def alpha0(D1 = datetime(2000,1,1,0,0,0)):
         minutes =minutes+1
 
     #в полночь совпадает с вариантом 3 (по UTC а не UT1), но в остальное время какая то хрень с кол-вом часов
-    S_mean =24110.54841+8640184.812866*d/36525+0.093104*d*d/36525/36525-0.0000062*d*d*d/36525/36525/36525
+    S_mean =24110.54841+8640184.812866*d/36525+0.093104*d /
+        *d/36525/36525-0.0000062*d*d*d/36525/36525/36525
 
     #в предположении что это формула для полуночной S_mean нужно сделать (теперь нет такой фигни с часами):
     S_mean =S_mean+UTC
@@ -55,7 +57,10 @@ def alpha0(D1 = datetime(2000,1,1,0,0,0)):
 
     return S_mean
 
-def ASK_to_GSK(DateTime = datetime(2000,1,1,0,0,0),vecASK = [0.0,0.0,0.0,0.0,0.0,0.0]): # ASK[Vx[km/s],Vy[km/s],Vz[km/s],x[km],y[km],z[km]]
+def ASK_to_GSK(
+    DateTime = datetime(2000,1,1,0,0,0),
+    vecASK = [0.0,0.0,0.0,0.0,0.0,0.0]
+): # ASK[Vx[km/s],Vy[km/s],Vz[km/s],x[km],y[km],z[km]]
     Alpha = alpha0(DateTime)
 
     Alpha = radians(Alpha)

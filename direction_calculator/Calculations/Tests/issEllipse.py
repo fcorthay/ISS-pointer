@@ -2,7 +2,6 @@
 import sys, os
 import math
 import numpy as np
-import matplotlib
 import matplotlib.pyplot as pyplot
 import matplotlib.ticker as ticker
 import datetime
@@ -357,7 +356,7 @@ latitude = np.arctan(
 equirectangular_plot = pyplot.subplot(313)
 equirectangular_plot.plot(longitude*to_deg, latitude*to_deg)
                                                               # grids and labels
-equirectangular_plot.xaxis.set_major_locator(ticker.MultipleLocator(60))
+equirectangular_plot.xaxis.set_major_locator(ticker.MultipleLocator(30))
 equirectangular_plot.set_ylim(-90, 90)
 equirectangular_plot.yaxis.set_major_locator(ticker.MultipleLocator(30))
 equirectangular_plot.grid()
@@ -366,9 +365,9 @@ equirectangular_plot.set(
     ylabel='latitude [°]',
     title='Equirectangular projection in earth-centered inertial coordinates'
 )
-                                                                 # write to file
+                                                     # write coordinates to file
 print()
-print('Writing equirectangular projection to file')
+print('Writing coordinates to file')
 CSV_file_spec = script_pathname + '/issEllipse.csv'
 CSV_file = open(CSV_file_spec, 'w')
 with CSV_file:
@@ -376,14 +375,11 @@ with CSV_file:
     for index in range(len(time)):
         writer.writerow([
             time[index],
-            angles_t[index],
-            longitude[index],
-            latitude[index],
-            '',
-            round(angles_t[index]*to_deg),
-            round(longitude[index]*to_deg),
-            round(latitude[index]*to_deg)
+            rotated_x[index],
+            rotated_y[index],
+            rotated_z[index]
         ])
+CSV_file.close
 
 # ==============================================================================
 # Display results
